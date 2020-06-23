@@ -1,58 +1,94 @@
 import React,{Component}  from 'react';
 import './index.css'; 
+import {ButtonToolbar,Dropdown,DropdownButton} from 'react-bootstrap';
 
 // Box
 class Box extends Component{
-selectBox = () => {
-  this.props.selectBox(this.props.row, this.props.col);
-}
+ selectBox = () => {
+   this.props.selectBox(this.props.row, this.props.col);
+ }
 
-render(){
+  render(){
    return(
     <div 
     className={this.props.boxClass}
     id={this.props.id}
     onClick={this.selectBox}
       />
- );
-}
+    );
+  }
 }
 
 
 // Grid
 class Grid extends Component{
-render(){
-const width=(this.props.cols*12);
-var rowsArr=[];
-var boxClass="";
-for (var i=0;i<this.props.rows;i++){
-  for (var j=0;j<this.props.cols;j++) {
-    let boxId=i + "_" + j;
-    
-    // checking each grid ,true means on , false means off .
-    boxClass=this.props.gridFull[i][j]? "box on":"box off";
-    rowsArr.push(
-     <Box
-     boxClass={boxClass}
-     key={boxId}
-     boxId={boxId}
-     row={i}
-     col={j}
-     selectBox={this.props.selectBox}
-     />
-    );
-  
+ render(){
+    const width=(this.props.cols*12);
+    var rowsArr=[];
+    var boxClass="";
+    for (var i=0;i<this.props.rows;i++){
+      for (var j=0;j<this.props.cols;j++) {
+        let boxId=i + "_" + j;
+        
+        // checking each grid ,true means on , false means off .
+        boxClass=this.props.gridFull[i][j]? "box on":"box off";
+        rowsArr.push(
+        <Box
+        boxClass={boxClass}
+        key={boxId}
+        boxId={boxId}
+        row={i}
+        col={j}
+        selectBox={this.props.selectBox}
+        />
+        );
+      
+      }
+
+    }
+
+      return(
+        <div className="grid" style={{width:width}}>
+          {rowsArr}
+        </div>
+      );
   }
 
 }
 
-return(
-  <div className="grid" style={{width:width}}>
-    {rowsArr}
-  </div>
-)
-}
+// Buttons Component
+class Buttons extends React.Component {
+  handleSelect = (event) => {
+    this.props.gridSize(event);
+  }
 
+  render(){
+    return (
+       <div className="center">
+          <ButtonToolbar>
+            <button className ="btn btn-default" onClick={this.props.playButton}>Play</button>
+            <button className ="btn btn-default" onClick={this.props.pauseButton}>Stop</button>
+            <button className ="btn btn-default" onClick={this.props.clear}>Clear</button>
+            <button className ="btn btn-default" onClick={this.props.seed}>Seed</button>
+            <button className ="btn btn-default" onClick={this.props.slow}>Slow</button>
+            <button className ="btn btn-default" onClick={this.props.fast}>Fast</button>
+
+            <DropdownButton
+              title="Grid Size"
+              id="size-menu"
+              onSelect={this.handleSelect}
+            >
+                <Dropdown.Item eventKey="1"> 20x10 </Dropdown.Item>
+                <Dropdown.Item eventKey="2"> 50x50 </Dropdown.Item>
+                <Dropdown.Item eventKey="3"> 70x50 </Dropdown.Item>
+              </DropdownButton>
+            
+          </ButtonToolbar>
+        </div>
+
+    )
+
+  }
 }
 
 
@@ -104,6 +140,10 @@ clearInterval(this.intervalId)
 this.intervalId =setInterval(this.play,this.speed);
 }
 
+pauseButton=() =>{
+ clearInterval(this.intervalId);
+}
+
 // Play function with game of life rules  
 play=() => {
   let g =this.state.gridFull;
@@ -152,6 +192,15 @@ return (
       rows={this.rows}
       cols ={this.cols}
       selectBox={this.selectBox}
+      />
+      <Buttons
+        playButton={this.playButton}
+        pauseButton={this.pauseButton}
+        seed={this.seed}
+        clear={this.clear}
+        slow={this.slow}
+        fast={this.fast}
+        gridSize={this.gridSize}
       />
       <h2>Generations: {this.state.generation}   </h2>
   </div>
