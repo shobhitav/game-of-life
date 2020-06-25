@@ -23,7 +23,7 @@ class Box extends Component{
 // Grid
 class Grid extends Component{
  render(){
-    const width=(this.props.cols*12);
+    const width=(this.props.cols*14)+1;
     var rowsArr=[];
     var boxClass="";
     for (var i=0;i<this.props.rows;i++){
@@ -66,21 +66,22 @@ class Buttons extends React.Component {
     return (
        <div className="center">
           <ButtonToolbar>
-            <button className ="btn btn-default" onClick={this.props.playButton}>Play</button>
-            <button className ="btn btn-default" onClick={this.props.pauseButton}>Stop</button>
-            <button className ="btn btn-default" onClick={this.props.clear}>Clear</button>
-            <button className ="btn btn-default" onClick={this.props.seed}>Seed</button>
-            <button className ="btn btn-default" onClick={this.props.slow}>Slow</button>
-            <button className ="btn btn-default" onClick={this.props.fast}>Fast</button>
+            <button style={{margin:'5px'}} className ="btn btn-primary" onClick={this.props.seed}>Seed</button>
+            <button style={{margin:'5px'}} className ="btn btn-primary" onClick={this.props.clear}>Clear</button>
+            <button style={{margin:'5px'}} className ="btn btn-primary" onClick={this.props.playButton}>Play</button>
+            <button style={{margin:'5px'}} className ="btn btn-primary" onClick={this.props.pauseButton}>Pause</button>
+            <button style={{margin:'5px'}} className ="btn btn-primary" onClick={this.props.slow}>Slow</button>
+            <button style={{margin:'5px'}} className ="btn btn-primary" onClick={this.props.fast}>Fast</button>
 
             <DropdownButton
               title="Grid Size"
               id="size-menu"
               onSelect={this.handleSelect}
+              style={{margin:'5px'}}
             >
-                <Dropdown.Item eventKey="1"> 20x10 </Dropdown.Item>
-                <Dropdown.Item eventKey="2"> 50x50 </Dropdown.Item>
-                <Dropdown.Item eventKey="3"> 70x50 </Dropdown.Item>
+                <Dropdown.Item eventKey="1"> 20 x 10 </Dropdown.Item>
+                <Dropdown.Item eventKey="2"> 50 x 50 </Dropdown.Item>
+                <Dropdown.Item eventKey="3"> 70 x 50 </Dropdown.Item>
               </DropdownButton>
             
           </ButtonToolbar>
@@ -144,9 +145,51 @@ pauseButton=() =>{
  clearInterval(this.intervalId);
 }
 
+slow = () => {
+  this.speed=1000;
+  this.playButton();
+}
+
+fast = () => {
+  this.speed=100;
+  this.playButton();
+}
+
+clear = () => {
+   let grid = Array(this.rows).fill().map( () => Array(this.cols).fill(false));
+   this.setState({
+     gridFull:grid,
+     generation:0
+   });
+   this.pauseButton();
+  }
+
+gridSize = (size) => {
+    switch(size){
+      case "1":
+        this.cols= 20;
+        this.rows=10;
+      break;
+      case "2":
+        this.cols= 50;
+        this.rows=50;
+      break;
+      default:
+        this.cols= 70;
+        this.rows=50;
+      }
+    this.clear();
+  }
+     
+
+
 // Play function with game of life rules  
 play=() => {
   let g =this.state.gridFull;
+  
+  /* using double buffer methodology to ensure grid goes from 
+  one generation to other generation in consistent and atomic manner
+  without user seeing in-progress / partial state */
   let g2=arrClone(this.state.gridFull);
 
   for (let i=0;i<this.rows;i++){
@@ -172,7 +215,7 @@ play=() => {
 
   this.setState ({
     gridFull: g2,
-    generation: this.state.generation +1
+    generation: this.state.generation+1
   });
 
 }
