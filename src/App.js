@@ -82,9 +82,13 @@ class Buttons extends React.Component {
                 <Dropdown.Item eventKey="1"> 20 x 10 </Dropdown.Item>
                 <Dropdown.Item eventKey="2"> 50 x 50 </Dropdown.Item>
                 <Dropdown.Item eventKey="3"> 70 x 50 </Dropdown.Item>
-              </DropdownButton>
-            
+            </DropdownButton>
           </ButtonToolbar>
+
+          
+            
+          
+
         </div>
 
     )
@@ -197,14 +201,14 @@ play=() => {
       // count is the no. of neighbors
       let count=0;
       // checking for neighbors , if there is a neighbor , increase count
-      if (i>0) if(g[i-1][j]) count++;
-      if (i>0 && j>0) if(g[i-1][j-1]) count++;
-      if (i>0 && j<this.cols-1) if(g[i-1][j+1]) count++;
-      if(j<this.cols-1) if(g[i][j+1]) count++;
-      if(j>0) if(g[i][j-1]) count++;
-      if(i<this.rows-1) if(g[i+1][j]) count++;
-      if(i<this.rows-1 && j>0) if(g[i+1][j-1]) count++;
-      if(i<this.rows-1 && this.cols-1) if(g[i+1][j+1]) count++;
+      if (i>0 && g[i-1][j]) count++;
+      if (i>0 && j>0 && g[i-1][j-1]) count++;
+      if (i>0 && j<this.cols-1 && g[i-1][j+1]) count++;
+      if(j<this.cols-1 && g[i][j+1]) count++;
+      if(j>0 && g[i][j-1]) count++;
+      if(i<this.rows-1 && g[i+1][j]) count++;
+      if(i<this.rows-1 && j>0 && g[i+1][j-1]) count++;
+      if(i<this.rows-1 && this.cols-1 && g[i+1][j+1]) count++;
       //if cell is alive and neighbor less than 2 or more than 3 , it dies
       if(g[i][j] &&  (count<2 || count >3 )) g2[i][j]=false;
       // if cell is dead and neighbor exactly 3 , it becomes a live cell
@@ -246,6 +250,24 @@ return (
         gridSize={this.gridSize}
       />
       <h2>Generations: {this.state.generation}   </h2>
+      <div className="infotable">
+        <h4>Rules of the Game</h4>
+        <ul className="infotext"> 
+          <li>Any live cell with fewer than two live neighbours dies, as if by underpopulation.</li>
+          <li>Any live cell with two or three live neighbours lives on to the next generation.</li>
+          <li>Any live cell with more than three live neighbours dies, as if by overpopulation.</li>
+          <li>Any dead cell with exactly three live neighbours becomes a live cell, as if by reproduction.</li>
+        </ul>
+      </div>
+      <div className="infotable">
+        <h4>About</h4>
+        <p className="infotext">
+        The Game of Life is a cellular automaton created by John Horton Conway in 1970. 
+        Although it is called a game, it actually has zero players. The player only participates 
+        in setting the initial state, and the evolution of the patterns begins moving forward. 
+        The general setup is a grid with cells showing as 'alive' or 'dead'.
+        </p>
+      </div>
   </div>
 
   )
